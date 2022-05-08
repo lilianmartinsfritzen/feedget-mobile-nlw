@@ -1,13 +1,27 @@
 import { StatusBar } from 'expo-status-bar'
 
-import {
-  View 
-} from 'react-native'
+import { View } from 'react-native'
+import AppLoading from 'expo-app-loading';
+import { 
+  useFonts, 
+  Inter_400Regular, 
+  Inter_500Medium 
+} from '@expo-google-fonts/inter';
+
 
 import { Widget } from './src/components/Widget';
 import { theme } from './src/theme'
 
-export default function App() {
+export default function App(): JSX.Element {
+  const [fontsLoaded] = useFonts({
+    Inter_400Regular, 
+    Inter_500Medium
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
   return (
     <View style={{
       flex: 1,
