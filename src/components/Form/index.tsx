@@ -13,11 +13,14 @@ import { captureScreen } from 'react-native-view-shot'
 
 import { FeedbackType } from '../../components/Widget'
 import { ScreenshotButton } from '../ScreenshotButton'
+import { Button } from '../Button'
+
+import { api } from '../../libs/api'
 
 import { styles } from './styles'
 import { theme } from '../../theme'
 import { feedbackTypes } from '../../utils/feedbackTypes'
-import { Button } from '../Button'
+
 
 interface Props {
   feedbackType: FeedbackType
@@ -31,6 +34,8 @@ export function Form({
   onFeedbackSent
 }: Props) {
   const [screenshot, setScreenshot] = useState<string | null>(null)
+  const [isSendingFeedback, setIsSendingFeedback] = useState(false)
+  const [comment, setComment] = useState('')
 
   const feedbackTypeInfo = feedbackTypes[feedbackType]
 
@@ -45,6 +50,29 @@ export function Form({
 
   function handleScreenshotRemove() {
     setScreenshot(null)
+  }
+
+  async function handleSendFeedback() {
+    if (isSendingFeedback) {
+      return
+    }
+
+    setIsSendingFeedback(true)
+
+    try {
+      await api.post('/feedbacks', {
+        type: feedbackType,
+        screenshot,
+        comment
+      })
+
+      onFeedbackSent()
+
+    } catch (error) {
+      console.log(error)
+      setIsSendingFeedback(false)
+    }
+
   }
 
   return (
@@ -77,6 +105,7 @@ export function Form({
         placeholder='Algo não está funcionando bem? Queremos corrigir. Conte com detalhes o que está acontecendo...'
         placeholderTextColor={theme.colors.text_secondary}
         autoCorrect={false}
+        onChangeText={setComment}
       />
 
       <View style={styles.footer}>
@@ -87,7 +116,8 @@ export function Form({
         />
 
         <Button 
-          isLoading={false}
+          onPress={handleSendFeedback}
+          isLoading={isSendingFeedback}
         />
       </View>     
     </View>
