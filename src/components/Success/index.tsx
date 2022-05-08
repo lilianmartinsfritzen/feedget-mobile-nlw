@@ -11,7 +11,14 @@ import { Copyright } from '../Copyright';
 
 import { styles } from './styles'
 
-export function Success() {
+interface Props {
+  onSendAnotherFeedback: () => void
+}
+
+export function Success({
+  onSendAnotherFeedback
+}: Props) {
+
   return (
     <View style={styles.container}>
       <Image 
@@ -25,7 +32,10 @@ export function Success() {
         Agradecemos o feedback
       </Text>
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        onPress={onSendAnotherFeedback}
+        style={styles.button}
+      >
         <Text
           style={styles.buttonTitle}
         >
